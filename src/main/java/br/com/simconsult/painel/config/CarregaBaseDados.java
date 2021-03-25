@@ -1,65 +1,76 @@
 package br.com.simconsult.painel.config;
 
-import java.time.LocalDate;
+import java.util.Collections;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
-import br.com.simconsult.painel.modelo.Cidade;
-import br.com.simconsult.painel.modelo.Cliente;
-import br.com.simconsult.painel.modelo.GrupoPosto;
-import br.com.simconsult.painel.modelo.Pessoa;
-import br.com.simconsult.painel.modelo.Role;
-import br.com.simconsult.painel.modelo.TipoPessoa;
-import br.com.simconsult.painel.modelo.Usuario;
-import br.com.simconsult.painel.repository.GrupoPostoRepository;
-import br.com.simconsult.painel.repository.PessoasRepository;
-import br.com.simconsult.painel.service.CidadeService;
-import br.com.simconsult.painel.service.ClienteService;
-import br.com.simconsult.painel.service.UserService;
-
+@CrossOrigin
 @Configuration
 public class CarregaBaseDados {
 
-
-
-	@Autowired
-	private UserService userService;
-
-	@Autowired
-	private CidadeService cidadeService;
-
-	@Autowired
-	private ClienteService clienteRepository;
-
-	@Autowired
-	private PessoasRepository pessoasRepository;
-
-	@Autowired
-	private GrupoPostoRepository grupoPostoRepository;
+//	@Autowired
+//	private UserService userService;
+//
+//	@Autowired
+//	private CidadeService cidadeService;
+//
+//	@Autowired
+//	private ClienteService clienteRepository;
+//
+//	@Autowired
+//	private PessoasRepository pessoasRepository;
+//
+//	@Autowired
+//	private GrupoPostoRepository grupoPostoRepository;
+//
+//	@Bean
+//	CommandLineRunner carregaDados() {
+//		return args -> {
+//
+//			Pessoa pessoa = pessoasRepository.save(new Pessoa(null, "Adriano de Aguiar", null, null, "97747572115",
+//					"adrianoaguiardez@gmail.com", "(65) 996089465", TipoPessoa.FISICA));
+//
+//			Cidade cidadeBanco = cidadeService.findById(1383L);
+//
+//			GrupoPosto grupoSalvo = grupoPostoRepository.save(new GrupoPosto(null, "Centro"));
+//
+//			Cliente cliente = new Cliente(null, null, "Aguiar", LocalDate.now(), true, pessoa, null, null, cidadeBanco,
+//					grupoSalvo, null);
+//
+//			Cliente clienteSalvo = clienteRepository.salvarMatriz(cliente);
+//			Usuario user = new Usuario(null, "Adriano de Aguiar", "adrianoaguiardez@gmail.com", "123",
+//					Role.ADMINISTRATOR, clienteSalvo);
+//			userService.save(user);
+//
+//		};
+//	}
 
 	@Bean
-	CommandLineRunner carregaDados() {
-		return args -> {
+	public FilterRegistrationBean<CorsFilter> corsFilter() {
 
-			Pessoa pessoa = pessoasRepository.save(new Pessoa(null, "Adriano de Aguiar", null, null, "97747572115",
-					"adrianoaguiardez@gmail.com", "(65) 996089465", TipoPessoa.FISICA));
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowCredentials(true);
+		config.addAllowedOrigin("*");
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("OPTIONS");
+		config.addAllowedMethod("GET");
+		config.addAllowedMethod("PUT");
+		config.addAllowedMethod("POST");
+		config.addAllowedMethod("DELETE");
+		config.addAllowedMethod("PATCH");
 
-			Cidade cidadeBanco = cidadeService.findById(1383L);
-
-			GrupoPosto grupoSalvo = grupoPostoRepository.save(new GrupoPosto(null, "Centro"));
-
-			Cliente cliente = new Cliente(null, null, "Aguiar", LocalDate.now(), true, pessoa, null, null, cidadeBanco,
-					grupoSalvo, null);
-
-			Cliente clienteSalvo = clienteRepository.salvarMatriz(cliente);
-			Usuario user = new Usuario(null, "Adriano de Aguiar", "adrianoaguiardez@gmail.com", "123",
-					Role.ADMINISTRATOR, clienteSalvo);
-			userService.save(user);
-
-		};
+		source.registerCorsConfiguration("/**", config);
+		final FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(source));
+		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		return bean;
 	}
 
 }
